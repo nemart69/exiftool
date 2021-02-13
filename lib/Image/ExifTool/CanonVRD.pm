@@ -11,6 +11,7 @@
 #               2010/09/14 - PH Added r/w support for XMP in VRD
 #               2015/05/16 - PH Added DR4 support (DPP 4.1.50.0)
 #               2018/03/13 - PH Update to DPP 4.8.20
+#               2021/02/13 - New tags / info added, existing names made consistent
 #
 # References:   1) Bogdan private communication (Canon DPP v3.4.1.1)
 #               2) Gert Kello private communication (DPP 3.8)
@@ -503,6 +504,7 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
             5 => 'Monochrome',
             6 => 'Unknown?', # PH (maybe in-camera custom picture style?)
             7 => 'Custom',
+            8 => 'Auto',
         },
     },
     0x03 => { Name => 'IsCustomPictureStyle', %noYes },
@@ -518,8 +520,8 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     0x11 => 'StandardRawSharpness',
     0x12 => 'StandardRawHighlightPoint',
     0x13 => 'StandardRawShadowPoint',
-    0x14 => 'StandardOutputHighlightPoint', #2
-    0x15 => 'StandardOutputShadowPoint', #2
+    0x14 => 'StandardRawOutputHighlightPoint', #2
+    0x15 => 'StandardRawOutputShadowPoint', #2
     0x16 => 'PortraitRawColorTone',
     0x17 => 'PortraitRawSaturation',
     0x18 => 'PortraitRawContrast',
@@ -527,8 +529,8 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     0x1a => 'PortraitRawSharpness',
     0x1b => 'PortraitRawHighlightPoint',
     0x1c => 'PortraitRawShadowPoint',
-    0x1d => 'PortraitOutputHighlightPoint',
-    0x1e => 'PortraitOutputShadowPoint',
+    0x1d => 'PortraitRawOutputHighlightPoint',
+    0x1e => 'PortraitRawOutputShadowPoint',
     0x1f => 'LandscapeRawColorTone',
     0x20 => 'LandscapeRawSaturation',
     0x21 => 'LandscapeRawContrast',
@@ -536,8 +538,8 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     0x23 => 'LandscapeRawSharpness',
     0x24 => 'LandscapeRawHighlightPoint',
     0x25 => 'LandscapeRawShadowPoint',
-    0x26 => 'LandscapeOutputHighlightPoint',
-    0x27 => 'LandscapeOutputShadowPoint',
+    0x26 => 'LandscapeRawOutputHighlightPoint',
+    0x27 => 'LandscapeRawOutputShadowPoint',
     0x28 => 'NeutralRawColorTone',
     0x29 => 'NeutralRawSaturation',
     0x2a => 'NeutralRawContrast',
@@ -545,8 +547,8 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     0x2c => 'NeutralRawSharpness',
     0x2d => 'NeutralRawHighlightPoint',
     0x2e => 'NeutralRawShadowPoint',
-    0x2f => 'NeutralOutputHighlightPoint',
-    0x30 => 'NeutralOutputShadowPoint',
+    0x2f => 'NeutralRawOutputHighlightPoint',
+    0x30 => 'NeutralRawOutputShadowPoint',
     0x31 => 'FaithfulRawColorTone',
     0x32 => 'FaithfulRawSaturation',
     0x33 => 'FaithfulRawContrast',
@@ -554,10 +556,10 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     0x35 => 'FaithfulRawSharpness',
     0x36 => 'FaithfulRawHighlightPoint',
     0x37 => 'FaithfulRawShadowPoint',
-    0x38 => 'FaithfulOutputHighlightPoint',
-    0x39 => 'FaithfulOutputShadowPoint',
+    0x38 => 'FaithfulRawOutputHighlightPoint',
+    0x39 => 'FaithfulRawOutputShadowPoint',
     0x3a => {
-        Name => 'MonochromeFilterEffect',
+        Name => 'MonochromeRawFilterEffect',
         PrintConv => {
             -2 => 'None',
             -1 => 'Yellow',
@@ -567,7 +569,7 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
         },
     },
     0x3b => {
-        Name => 'MonochromeToningEffect',
+        Name => 'MonochromeRawToningEffect',
         PrintConv => {
             -2 => 'None',
             -1 => 'Sepia',
@@ -576,29 +578,29 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
             2 => 'Green',
         },
     },
-    0x3c => 'MonochromeContrast',
-    0x3d => { Name => 'MonochromeLinear', %noYes },
-    0x3e => 'MonochromeSharpness',
+    0x3c => 'MonochromeRawContrast',
+    0x3d => { Name => 'MonochromeRawLinear', %noYes },
+    0x3e => 'MonochromeRawSharpness',
     0x3f => 'MonochromeRawHighlightPoint',
     0x40 => 'MonochromeRawShadowPoint',
-    0x41 => 'MonochromeOutputHighlightPoint',
-    0x42 => 'MonochromeOutputShadowPoint',
-    0x45 => { Name => 'UnknownContrast',            Unknown => 1 },
-    0x46 => { Name => 'UnknownLinear', %noYes,      Unknown => 1 },
-    0x47 => { Name => 'UnknownSharpness',           Unknown => 1 },
+    0x41 => 'MonochromeRawOutputHighlightPoint',
+    0x42 => 'MonochromeRawOutputShadowPoint',
+    0x45 => { Name => 'UnknownRawContrast',            Unknown => 1 },
+    0x46 => { Name => 'UnknownRawLinear', %noYes,      Unknown => 1 },
+    0x47 => { Name => 'UnknownRawSharpness',           Unknown => 1 },
     0x48 => { Name => 'UnknownRawHighlightPoint',   Unknown => 1 },
     0x49 => { Name => 'UnknownRawShadowPoint',      Unknown => 1 },
-    0x4a => { Name => 'UnknownOutputHighlightPoint',Unknown => 1 },
-    0x4b => { Name => 'UnknownOutputShadowPoint',   Unknown => 1 },
-    0x4c => 'CustomColorTone',
-    0x4d => 'CustomSaturation',
-    0x4e => 'CustomContrast',
-    0x4f => { Name => 'CustomLinear', %noYes },
-    0x50 => 'CustomSharpness',
+    0x4a => { Name => 'UnknownRawOutputHighlightPoint',Unknown => 1 },
+    0x4b => { Name => 'UnknownRawOutputShadowPoint',   Unknown => 1 },
+    0x4c => 'CustomRawColorTone',
+    0x4d => 'CustomRawSaturation',
+    0x4e => 'CustomRawContrast',
+    0x4f => { Name => 'CustomRawLinear', %noYes },
+    0x50 => 'CustomRawSharpness',
     0x51 => 'CustomRawHighlightPoint',
     0x52 => 'CustomRawShadowPoint',
-    0x53 => 'CustomOutputHighlightPoint',
-    0x54 => 'CustomOutputShadowPoint',
+    0x53 => 'CustomRawOutputHighlightPoint',
+    0x54 => 'CustomRawOutputShadowPoint',
     0x58 => {
         Name => 'CustomPictureStyleData',
         Format => 'var_int16u',
@@ -886,39 +888,53 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
         Name => 'UnsharpMask',
         PrintConv => { 0 => 'Off', 1 => 'On' },
     },
-    0x92 => 'StandardUnsharpMaskStrength',
-    0x94 => 'StandardUnsharpMaskFineness',
-    0x96 => 'StandardUnsharpMaskThreshold',
-    0x98 => 'PortraitUnsharpMaskStrength',
-    0x9a => 'PortraitUnsharpMaskFineness',
-    0x9c => 'PortraitUnsharpMaskThreshold',
-    0x9e => 'LandscapeUnsharpMaskStrength',
-    0xa0 => 'LandscapeUnsharpMaskFineness',
-    0xa2 => 'LandscapeUnsharpMaskThreshold',
-    0xa4 => 'NeutraUnsharpMaskStrength',
-    0xa6 => 'NeutralUnsharpMaskFineness',
-    0xa8 => 'NeutralUnsharpMaskThreshold',
-    0xaa => 'FaithfulUnsharpMaskStrength',
-    0xac => 'FaithfulUnsharpMaskFineness',
-    0xae => 'FaithfulUnsharpMaskThreshold',
-    0xb0 => 'MonochromeUnsharpMaskStrength',
-    0xb2 => 'MonochromeUnsharpMaskFineness',
-    0xb4 => 'MonochromeUnsharpMaskThreshold',
-    0xb6 => 'CustomUnsharpMaskStrength',
-    0xb8 => 'CustomUnsharpMaskFineness',
-    0xba => 'CustomUnsharpMaskThreshold',
-    0xbc => 'CustomDefaultUnsharpStrength',
-    0xbe => 'CustomDefaultUnsharpFineness',
-    0xc0 => 'CustomDefaultUnsharpThreshold',
+    0x92 => 'StandardRawUnsharpMaskStrength',
+    0x94 => 'StandardRawUnsharpMaskFineness',
+    0x96 => 'StandardRawUnsharpMaskThreshold',
+    0x98 => 'PortraitRawUnsharpMaskStrength',
+    0x9a => 'PortraitRawUnsharpMaskFineness',
+    0x9c => 'PortraitRawUnsharpMaskThreshold',
+    0x9e => 'LandscapeRawUnsharpMaskStrength',
+    0xa0 => 'LandscapeRawUnsharpMaskFineness',
+    0xa2 => 'LandscapeRawUnsharpMaskThreshold',
+    0xa4 => 'NeutralRawUnsharpMaskStrength',
+    0xa6 => 'NeutralRawUnsharpMaskFineness',
+    0xa8 => 'NeutralRawUnsharpMaskThreshold',
+    0xaa => 'FaithfulRawUnsharpMaskStrength',
+    0xac => 'FaithfulRawUnsharpMaskFineness',
+    0xae => 'FaithfulRawUnsharpMaskThreshold',
+    0xb0 => 'MonochromeRawUnsharpMaskStrength',
+    0xb2 => 'MonochromeRawUnsharpMaskFineness',
+    0xb4 => 'MonochromeRawUnsharpMaskThreshold',
+    0xb6 => 'CustomRawUnsharpMaskStrength',
+    0xb8 => 'CustomRawUnsharpMaskFineness',
+    0xba => 'CustomRawUnsharpMaskThreshold',
+    0xbc => 'CustomDefaultRawUnsharpStrength',
+    0xbe => 'CustomDefaultRawUnsharpFineness',
+    0xc0 => 'CustomDefaultRawUnsharpThreshold',
     # (VRD 3.9.1 edit data ends here: 392 bytes, index 0xc4)
-    # 0xc9: 3    - some RawSharpness
-    # 0xca: 4095 - some RawHighlightPoint
-    # 0xcb: 0    - some RawShadowPoint
-    # 0xcc: 4095 - some OutputHighlightPoint
-    # 0xcd: 0    - some OutputShadowPoint
-    # 0xd1: 3    - some UnsharpMaskStrength
-    # 0xd3: 7    - some UnsharpMaskFineness
-    # 0xd5: 3,4  - some UnsharpMaskThreshold
+    0xc5 => 'AutoRawColorTone',
+    0xc6 => 'AutoRawSaturation',
+    0xc7 => 'AutoRawContrast',
+    0xc8 => { Name => 'AutoRawLinear', %noYes },
+    0xc9 => 'AutoRawSharpness',
+    0xca => 'AutoRawHighlightPoint',
+    0xcb => 'AutoRawShadowPoint',
+    0xcc => 'AutoRawOutputHighlightPoint',
+    0xcd => 'AutoRawOutputShadowPoint',
+    0xce => {
+        Name => 'AutoRawHighlight',
+        ValueConv => '$val / 10',
+        ValueConvInv => '$val * 10',
+    },
+    0xcf => {
+        Name => 'AutoRawShadow',
+        ValueConv => '$val / 10',
+        ValueConvInv => '$val * 10',
+    },
+    0xd1 => 'AutoRawUnsharpMaskStrength',
+    0xd3 => 'AutoRawUnsharpMaskFineness',
+    0xd5 => 'AutoRawUnsharpMaskThreshold',
     0xd6 => { Name => 'CropCircleActive', %noYes },
     0xd7 => 'CropCircleX',
     0xd8 => 'CropCircleY',
@@ -966,6 +982,44 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     0xe7 => 'CameraRawShadowPoint',
     0xe8 => 'CameraRawOutputHighlightPoint',
     0xe9 => 'CameraRawOutputShadowPoint',
+    # VRD 3.14 (488 bytes)
+    0xea => {
+        Name => 'CameraRawHighlight',
+        ValueConv => '$val / 10',
+        ValueConvInv => '$val * 10',
+    },
+    0xeb => {
+        Name => 'CameraRawShadow',
+        ValueConv => '$val / 10',
+        ValueConvInv => '$val * 10',
+    },
+    # 0xec => 'Adj01',
+    0xed => 'CameraRawUnsharpMaskStrength',
+    # 0xee => 'Adj02',
+    0xef => 'CameraRawUnsharpMaskFineness',
+    # 0xf0 => 'Adj03',
+    0xf1 => 'CameraRawUnsharpMaskThreshold',
+    0xf2 => {
+        Name => 'RawEditDataSelector',
+        PrintConvColumns => 2,
+        PrintConv => {
+            0 => 'Standard',
+            1 => 'Portrait',
+            2 => 'Landscape',
+            3 => 'Neutral',
+            4 => 'Faithful',
+            5 => 'Monochrome',
+            6 => 'Unknown',  # PH (maybe in-camera custom picture style?)
+            7 => 'Custom',
+            8 => 'Auto',
+            9 => 'Camera',
+        },
+    },
+    # 0xf3 => 'Adj05',
+    # 0xf4 => 'Adj06',
+    # 0xc9 => 'Adj07',
+    # 0xce => 'Adj08',
+    # 0xcf => 'Adj09',
 );
 
 # DLO tags (ref PH)
@@ -1082,6 +1136,10 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
         },
     },
     # 0x20302 - Gamma curve data
+    0x20302 => {
+        Name => 'GammaCurve',
+        SubDirectory => { TagTable => 'Image::ExifTool::CanonVRD::GammaCurve' },
+    },
     0x20303 => 'ContrastAdj',
     0x20304 => 'ColorToneAdj',
     0x20305 => 'ColorSaturationAdj',
@@ -1326,18 +1384,24 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
     },
     0x0a => 'ToneCurveX',
     0x0b => 'ToneCurveY',
+    0x29 => { Name => 'RedCurveInputRange',  Format => 'int32u[2]', Notes => '255 max' },
+    0x2b => { Name => 'RedCurveOutputRange', Format => 'int32u[2]', Notes => '255 max' },
     0x2d => {
         Name => 'RedCurvePoints',
         Format => 'int32u[21]',
         PrintConv => 'Image::ExifTool::CanonVRD::ToneCurvePrint($val)',
         PrintConvInv => 'Image::ExifTool::CanonVRD::ToneCurvePrintInv($val)',
     },
+    0x4f => { Name => 'GreenCurveInputRange',  Format => 'int32u[2]', Notes => '255 max' },
+    0x51 => { Name => 'GreenCurveOutputRange', Format => 'int32u[2]', Notes => '255 max' },
     0x53 => {
         Name => 'GreenCurvePoints',
         Format => 'int32u[21]',
         PrintConv => 'Image::ExifTool::CanonVRD::ToneCurvePrint($val)',
         PrintConvInv => 'Image::ExifTool::CanonVRD::ToneCurvePrintInv($val)',
     },
+    0x75 => { Name => 'BlueCurveInputRange',  Format => 'int32u[2]', Notes => '255 max' },
+    0x77 => { Name => 'BlueCurveOutputRange', Format => 'int32u[2]', Notes => '255 max' },
     0x79 => {
         Name => 'BlueCurvePoints',
         Format => 'int32u[21]',
@@ -1400,6 +1464,53 @@ my $blankFooter = "CANON OPTIONAL DATA\0" . ("\0" x 42) . "\xff\xd9";
         PrintConvInv => '$val',
     },
     0x0f => { Name => 'GammaCurveOutputRange', Format => 'double[2]', Notes => '16383 max' },
+);
+
+%Image::ExifTool::CanonVRD::GammaCurve = (
+    PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
+    WRITE_PROC => \&Image::ExifTool::WriteBinaryData,
+    CHECK_PROC => \&Image::ExifTool::CheckBinaryData,
+    WRITABLE => 1,
+    FIRST_ENTRY => 0,
+    FORMAT => 'double',
+    GROUPS => { 2 => 'Image' },
+    # 0x0b-0x10 are the same as first 6 doubles of tag DR4_0x20302
+    # 0x01 - value: 14
+    0x01 => {
+        Name => 'CuGammaBlackPoint',
+        ValueConv => q{
+            return 0 if $val <= 0;
+            $val = log($val / 4.6875) / log(2) + 1;
+            return abs($val) > 1e-10 ? $val : 0;
+        },
+        ValueConvInv => '$val ? exp(($val - 1) * log(2)) * 4.6876 : 0',
+        PrintConv => 'sprintf("%+.3f", $val)',
+        PrintConvInv => '$val',
+    },
+    0x02 => {
+        Name => 'CuGammaWhitePoint',
+        ValueConv => q{
+            return $val if $val <= 0;
+            $val = log($val / 4.6875) / log(2) - 11.77109325169954;
+            return abs($val) > 1e-10 ? $val : 0;
+        },
+        ValueConvInv => '$val ? exp(($val + 11.77109325169954) * log(2)) * 4.6875 : 0',
+        PrintConv => 'sprintf("%+.3f", $val)',
+        PrintConvInv => '$val',
+    },
+    0x03 => {
+        Name => 'CuGammaMidPoint',
+        ValueConv => q{
+            return $val if $val <= 0;
+            $val = log($val / 4.6875) / log(2) - 8;
+            return abs($val) > 1e-10 ? $val : 0;
+        },
+        ValueConvInv => '$val ? exp(($val + 8) * log(2)) * 4.6876 : 0',
+        PrintConv => 'sprintf("%+.3f", $val)',
+        PrintConvInv => '$val',
+    },
+    0x04 => { Name => 'CuGammaCurveOutputRange', Format => 'double[2]', Notes => '16383 max' },
+    0x06 => { Name => 'CuGammaCurvePoints', Format => 'double[21]', Notes => '10 + pairs' },
 );
 
 # Version 4 crop information (ref PH)
